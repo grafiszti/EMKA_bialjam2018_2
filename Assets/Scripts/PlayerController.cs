@@ -2,25 +2,28 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerController : MonoBehaviour {
-    
+public class PlayerController : MonoBehaviour
+{
+
     public bool facingRight = true;
     public bool jump = false;
     public bool throwKnife = false;
     private bool drawVector = false;
 
     public float maxSpeed = 5f;
-    public float jumpForce = 100f;        
-    public float moveForce = 3650f;          
+    public float jumpForce = 100f;
+    public float moveForce = 3650f;
 
-    private Transform groundCheck;          
-    private bool grounded = true; 
+    private Transform groundCheck;
+    private bool grounded = true;
     private Animator anim;
     private Rigidbody2D body;
     private LineRenderer lineRenderer;
 
     private Vector2 mouseClickPosition;
     private Vector2 throwVector;
+    private Vector2 targetPosition;
+
 
     private CircleCollider2D knifeTopCollider;
 
@@ -43,18 +46,22 @@ public class PlayerController : MonoBehaviour {
 
         if (Input.GetMouseButtonDown(0))
         {
-            this.mouseClickPosition = Input.mousePosition;
+            this.mouseClickPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             drawVector = true;
         }
 
-        if(Input.GetMouseButtonUp(0)){
-            this.throwVector = new Vector2(Input.mousePosition.x, Input.mousePosition.y) - mouseClickPosition;
-            lineRenderer.SetPosition(0, new Vector2(0, 0));
-            lineRenderer.SetPosition(1, new Vector2(0, 0));
+        if (Input.GetMouseButtonUp(0))
+        {
+            Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            this.throwVector = new Vector2(mousePosition.x, mousePosition.y) - mouseClickPosition;
+
+            this.targetPosition = new Vector2(knifeTopCollider.transform.position.x, knifeTopCollider.transform.position.y) + this.throwVector;
+            lineRenderer.SetPosition(0, body.position);
+            lineRenderer.SetPosition(1, targetPosition);
             drawVector = false;
             throwKnife = true;
         }
-   }
+    }
 
     void FixedUpdate()
     {
@@ -84,41 +91,50 @@ public class PlayerController : MonoBehaviour {
         if (jump)
             Jump();
 
-        if(drawVector)
+        if (drawVector)
             DrawVector();
 
-        if(throwKnife)
+        if (throwKnife)
             ThrowKnife();
-        
+
     }
 
-    private void DrawVector(){
-        Vector2 start = Camera.main.ScreenToWorldPoint(this.mouseClickPosition);
+    private void DrawVector()
+    {
+        Vector2 start = this.mouseClickPosition;
         Vector2 end = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         lineRenderer.SetPosition(0, start);
         lineRenderer.SetPosition(1, end);
     }
 
-    private void ThrowKnife(){
-        Debug.Log(throwVector);
-        throwVector.Scale(new Vector2(4f, 4f));
+    private void ThrowKnife()
+    {
         body.freezeRotation = false;
-        
-        Vector3 knifeColliderPosition = knifeTopCollider.transform.position;
-        Debug.Log("Knife: " + knifeColliderPosition + " | Throw: " + throwVector);
         body.bodyType = RigidbodyType2D.Dynamic;
 
-        body.AddForceAtPosition(throwVector, knifeColliderPosition);
+        Vector3 knifeColliderPosition = knifeTopCollider.transform.position;
+        Debug.Log("Knife: " + knifeColliderPosition + " | Throw: " + throwVector + " | Target: " + targetPosition);
+
+        Debug.Log("Sqr magnitude of throw vector: " + throwVector.sqrMagnitude);
+        body.AddForceAtPosition(throwVector * 15f, knifeColliderPosition, ForceMode2D.Impulse);
+
+        float angle = Mathf.Atan2(throwVector.y, throwVector.x) * Mathf.Rad2Deg;
+        Quaternion q = Quaternion.AngleAxis(angle, Vector3.forward);
+        Debug.Log("Angle: " + angle);
+        body.MoveRotation(angle - 90);
+
         throwKnife = false;
     }
 
-    private void Jump(){
+    private void Jump()
+    {
         anim.SetTrigger("Jump");
         body.AddForce(new Vector2(0f, jumpForce));
         this.jump = false;
     }
 
-    void Flip(){
+    void Flip()
+    {
         facingRight = !facingRight;
 
         // Multiply the player's x local scale by -1.
@@ -137,6 +153,11 @@ public class PlayerController : MonoBehaviour {
         switch (collisionObjectTag)
         {
             case "Ground":
+                if (theCollision.otherCollider == knifeTopCollider && body.velocity.magnitude > 1)
+                {
+                    Debug.Log("Jebło ostrzem w podłogę.");
+                    body.bodyType = RigidbodyType2D.Static;
+                }
                 grounded |= true;
                 break;
             case "Plank":
@@ -154,6 +175,6 @@ public class PlayerController : MonoBehaviour {
     //consider when character is jumping .. it will exit collision.
     void OnCollisionExit2D(Collision2D theCollision)
     {
-        grounded &= theCollision.gameObject.name != "floor";
+        grounded &= theCollision.gameObject.name != "Ground";
     }
 }
