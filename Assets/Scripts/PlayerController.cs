@@ -33,7 +33,6 @@ public class PlayerController : MonoBehaviour {
         if (Input.GetButtonDown("Jump") && grounded)
         {
             jump = true;
-            //Debug.Log("JUMP");
         }
     }
 
@@ -54,11 +53,6 @@ public class PlayerController : MonoBehaviour {
         if (Mathf.Abs(body.velocity.x) > maxSpeed)
             // ... set the player's velocity to the maxSpeed in the x axis.
             body.velocity = new Vector2(Mathf.Sign(body.velocity.x) * maxSpeed, body.velocity.y);
-
-        // Stopping down player when no horizontal input
-        if(Mathf.Abs(h)  < 0.001f){
-            //body.velocity = new Vector2(0, body.velocity.y);
-        }
 
         // If the input is moving the player right and the player is facing left...
         if (h > 0 && !facingRight)
@@ -87,7 +81,6 @@ public class PlayerController : MonoBehaviour {
 
     void Flip()
     {
-        // Switch the way the player is labelled as facing.
         facingRight = !facingRight;
 
         // Multiply the player's x local scale by -1.
@@ -97,17 +90,16 @@ public class PlayerController : MonoBehaviour {
     }
 
     //make sure u replace "floor" with your gameobject name.on which player is standing
-    void OnCollisionEnter(Collision theCollision)
+    void OnCollisionEnter2D (Collision2D theCollision)
     {
-        Debug.Log("Collision w: " + theCollision.gameObject.name);
-        //if (theCollision.gameObject.name == "floor")
-        //{
+        if (theCollision.gameObject.name == "floor")
+        {
             grounded = true;
-        //}
+        }
     }
 
     //consider when character is jumping .. it will exit collision.
-    void OnCollisionExit(Collision theCollision)
+    void OnCollisionExit2D(Collision2D theCollision)
     {
         if (theCollision.gameObject.name == "floor")
             grounded = false;
