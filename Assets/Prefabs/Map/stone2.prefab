@@ -22,7 +22,7 @@ GameObject:
   - component: {fileID: 212821376359483564}
   m_Layer: 0
   m_Name: stone_shadow2
-  m_TagString: Untagged
+  m_TagString: Stone
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -40,7 +40,7 @@ GameObject:
   - component: {fileID: 61345454730367996}
   m_Layer: 0
   m_Name: stone2
-  m_TagString: Untagged
+  m_TagString: Stone
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

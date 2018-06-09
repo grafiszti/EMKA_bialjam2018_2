@@ -132,14 +132,14 @@ public class PlayerController : MonoBehaviour {
     {
         body.rotation = 0;
         body.freezeRotation = true;
-        string collisionObjectName = theCollision.gameObject.name;
-        Debug.Log("Collision object name: " + collisionObjectName);
-        switch (collisionObjectName)
+        string collisionObjectTag = theCollision.gameObject.tag;
+        Debug.Log("Collision object name: " + collisionObjectTag);
+        switch (collisionObjectTag)
         {
-            case "floor":
+            case "Ground":
                 grounded |= true;
                 break;
-            case "wall":
+            case "Plank":
                 Debug.Log("Magnitude: " + body.velocity.magnitude);
 
                 if (theCollision.otherCollider == knifeTopCollider && body.velocity.magnitude > 1)
