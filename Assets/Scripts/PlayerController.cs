@@ -10,8 +10,8 @@ public class PlayerController : MonoBehaviour {
     private bool drawVector = false;
 
     public float maxSpeed = 5f;
-    public float jumpForce = 100f;         // Amount of force added when the player jumps.
-    public float moveForce = 3650f;          // Amount of force added to move the player left and right.
+    public float jumpForce = 100f;        
+    public float moveForce = 3650f;          
 
     private Transform groundCheck;          
     private bool grounded = true; 
@@ -36,7 +36,6 @@ public class PlayerController : MonoBehaviour {
         if (Input.GetButtonDown("Jump") && grounded)
         {
             this.jump = true;
-            Debug.Log("jumpppppppppp" + this.jump);
         }
 
         if (Input.GetMouseButtonDown(0))
@@ -95,7 +94,6 @@ public class PlayerController : MonoBehaviour {
         Vector2 end = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         lineRenderer.SetPosition(0, start);
         lineRenderer.SetPosition(1, end);
-        Debug.Log("Drawing strzealka");
     }
 
     private void ThrowKnife(){
