@@ -15,26 +15,48 @@ public class PlayerController : MonoBehaviour {
     private bool grounded = true; 
     private Animator anim;
     private Rigidbody2D body;
+    private LineRenderer lineRenderer;
+
+    private Vector2 mouseClickPosition;
+    private bool drawVector = false;
 
     void Awake()
     {
-        // Setting up references.
-        groundCheck = transform.Find("groundCheck");
-        anim = GetComponent<Animator>();
-        body = GetComponent<Rigidbody2D>();
+        this.groundCheck = transform.Find("groundCheck");
+        this.anim = GetComponent<Animator>();
+        this.body = GetComponent<Rigidbody2D>();
+        this.lineRenderer = GetComponent<LineRenderer>();
     }
 
     void Update()
     {
-        // The player is grounded if a linecast to the groundcheck position hits anything on the ground layer.
-        //grounded = Physics2D.Linecast(transform.position, groundCheck.position, 1 << LayerMask.NameToLayer("Ground"));
-
         // If the jump button is pressed and the player is grounded then the player should jump.
         if (Input.GetButtonDown("Jump") && grounded)
         {
-            jump = true;
+            this.jump = true;
         }
-    }
+
+        if (Input.GetMouseButtonDown(0))
+        {
+            this.mouseClickPosition = Input.mousePosition;
+            this.drawVector = true;
+        }
+
+        if(Input.GetMouseButtonUp(0)){
+            this.drawVector = false;
+        }
+
+        if(drawVector){
+            Vector2 start = Camera.main.ScreenToWorldPoint(this.mouseClickPosition);
+            Vector2 end = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+
+            lineRenderer.SetPosition(0, start);
+            lineRenderer.SetPosition(1, end);
+        } else {
+            lineRenderer.SetPosition(0, new Vector2(0, 0));
+            lineRenderer.SetPosition(1, new Vector2(0, 0));
+        }
+   }
 
     void FixedUpdate()
     {
