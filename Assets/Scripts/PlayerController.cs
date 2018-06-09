@@ -54,6 +54,7 @@ public class PlayerController : MonoBehaviour
             this.throwVector = new Vector2(Input.mousePosition.x, Input.mousePosition.y) - mouseClickPosition;
             drawVector = false;
             throwKnife = true;
+            DrawVector();
         }
     }
 
@@ -81,7 +82,7 @@ public class PlayerController : MonoBehaviour
             Jump();
 
         if (drawVector)
-            DrawVector();
+            DrawVector(this.mouseClickPosition, Input.mousePosition);
 
         if (throwKnife)
             ThrowKnife();
@@ -97,10 +98,10 @@ public class PlayerController : MonoBehaviour
             Flip();
     }
 
-    private void DrawVector()
+    private void DrawVector(Vector2 rawStart = new Vector2(), Vector2 rawEnd = new Vector2())
     {
-        Vector2 start = Camera.main.ScreenToWorldPoint(this.mouseClickPosition);
-        Vector2 end = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        Vector2 start = Camera.main.ScreenToWorldPoint(rawStart);
+        Vector2 end = Camera.main.ScreenToWorldPoint(rawEnd);
         lineRenderer.SetPosition(0, start);
         lineRenderer.SetPosition(1, end);
     }
@@ -108,7 +109,7 @@ public class PlayerController : MonoBehaviour
     private void ThrowKnife()
     {
         body.freezeRotation = false;
-        Vector3 knifeColliderPosition = knifeTopCollider.transform.position;
+        Vector2 knifeColliderPosition = knifeTopCollider.transform.position;
         knifeTopBody.AddForce(throwVector * 15f);
 
         //float angle = Mathf.Atan2(throwVector.y, throwVector.x) * Mathf.Rad2Deg;
