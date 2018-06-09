@@ -60,23 +60,11 @@ public class PlayerController : MonoBehaviour
 
     void FixedUpdate()
     {
-        // Cache the horizontal input.
-        float h = Input.GetAxis("Horizontal");
+        float horizontalInput = Input.GetAxis("Horizontal");
 
-        // The Speed animator parameter is set to the absolute value of the horizontal input.
-        anim.SetFloat("Speed", Mathf.Abs(h));
-
-        // If the player is changing direction (h has a different sign to velocity.x) or hasn't reached maxSpeed yet...
-        if (h * body.velocity.x < maxSpeed)
-            // ... add a force to the player.
-            body.AddForce(Vector2.right * h * moveForce);
-
-        // If the player's horizontal velocity is greater than the maxSpeed...
-        if (Mathf.Abs(body.velocity.x) > maxSpeed)
-            // ... set the player's velocity to the maxSpeed in the x axis.
-            body.velocity = new Vector2(Mathf.Sign(body.velocity.x) * maxSpeed, body.velocity.y);
-
-        HandleFaceRotation(h);
+        HandlePlayerAcceleration(horizontalInput);
+        HandlePlayerMaxVelocity();
+        HandleFaceRotation(horizontalInput);
 
         if (jump)
             Jump();
@@ -86,7 +74,22 @@ public class PlayerController : MonoBehaviour
 
         if (throwKnife)
             ThrowKnife();
+    }
 
+    private void HandlePlayerAcceleration(float horizontalVelocity){
+        // The Speed animator parameter is set to the absolute value of the horizontal input.
+        anim.SetFloat("Speed", Mathf.Abs(horizontalVelocity));
+
+        // If the player is changing direction (h has a different sign to velocity.x) or hasn't reached maxSpeed yet...
+        if (horizontalVelocity * body.velocity.x < maxSpeed)
+            // ... add a force to the player.
+            body.AddForce(Vector2.right * horizontalVelocity * moveForce);
+    }
+
+    private void HandlePlayerMaxVelocity(){
+        // If the player's horizontal velocity is greater than the maxSpeed...
+        if (Mathf.Abs(body.velocity.x) > maxSpeed)
+            body.velocity = new Vector2(Mathf.Sign(body.velocity.x) * maxSpeed, body.velocity.y);
     }
 
     private void HandleFaceRotation(float h){
