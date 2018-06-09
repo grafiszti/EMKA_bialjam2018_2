@@ -100,6 +100,7 @@ public class PlayerController : MonoBehaviour {
     private void ThrowKnife(){
         Debug.Log(throwVector);
         throwVector.Scale(new Vector2(4f, 4f));
+        body.freezeRotation = false;
         body.AddForceAtPosition(throwVector, new Vector2());
         throwKnife = false;
     }
@@ -122,7 +123,8 @@ public class PlayerController : MonoBehaviour {
     //make sure u replace "floor" with your gameobject name.on which player is standing
     void OnCollisionEnter2D (Collision2D theCollision)
     {
-        grounded |= theCollision.gameObject.name == "floor";
+        body.rotation = 0;
+        body.freezeRotation = true;
     }
 
     //consider when character is jumping .. it will exit collision.
