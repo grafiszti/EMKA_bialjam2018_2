@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-
     public bool facingRight = true;
     public bool jump = false;
     public bool throwKnife = false;
@@ -14,7 +13,6 @@ public class PlayerController : MonoBehaviour
     public float jumpForce = 100f;
     public float moveForce = 3650f;
 
-    private Transform groundCheck;
     private bool grounded = true;
     private Animator anim;
     private Rigidbody2D body;
@@ -24,21 +22,21 @@ public class PlayerController : MonoBehaviour
     private Vector2 throwVector;
     private Vector2 targetPosition;
 
-
     private CircleCollider2D knifeTopCollider;
+    private Rigidbody2D knifeTopBody;
+
 
     void Awake()
     {
-        this.groundCheck = transform.Find("groundCheck");
         this.anim = GetComponent<Animator>();
         this.body = GetComponent<Rigidbody2D>();
         this.lineRenderer = GetComponent<LineRenderer>();
         this.knifeTopCollider = transform.Find("knife_top").GetComponent<CircleCollider2D>();
+        this.knifeTopBody = transform.Find("knife_top").GetComponent<Rigidbody2D>();
     }
 
     void Update()
     {
-        // If the jump button is pressed and the player is grounded then the player should jump.
         if (Input.GetButtonDown("Jump") && grounded)
         {
             this.jump = true;
@@ -46,18 +44,14 @@ public class PlayerController : MonoBehaviour
 
         if (Input.GetMouseButtonDown(0))
         {
-            this.mouseClickPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            this.mouseClickPosition = Input.mousePosition;
             drawVector = true;
         }
 
         if (Input.GetMouseButtonUp(0))
         {
-            Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            this.throwVector = new Vector2(mousePosition.x, mousePosition.y) - mouseClickPosition;
-
-            this.targetPosition = new Vector2(knifeTopCollider.transform.position.x, knifeTopCollider.transform.position.y) + this.throwVector;
-            lineRenderer.SetPosition(0, body.position);
-            lineRenderer.SetPosition(1, targetPosition);
+            this.targetPosition = Input.mousePosition;
+            this.throwVector = new Vector2(Input.mousePosition.x, Input.mousePosition.y) - mouseClickPosition;
             drawVector = false;
             throwKnife = true;
         }
@@ -81,12 +75,7 @@ public class PlayerController : MonoBehaviour
             // ... set the player's velocity to the maxSpeed in the x axis.
             body.velocity = new Vector2(Mathf.Sign(body.velocity.x) * maxSpeed, body.velocity.y);
 
-        // If the input is moving the player right and the player is facing left...
-        if (h > 0 && !facingRight)
-            Flip();
-        // Otherwise if the input is moving the player left and the player is facing right...
-        else if (h < 0 && facingRight)
-            Flip();
+        HandleFaceRotation(h);
 
         if (jump)
             Jump();
@@ -99,9 +88,18 @@ public class PlayerController : MonoBehaviour
 
     }
 
+    private void HandleFaceRotation(float h){
+        // If the input is moving the player right and the player is facing left...
+        if (h > 0 && !facingRight)
+            Flip();
+        // Otherwise if the input is moving the player left and the player is facing right...
+        else if (h < 0 && facingRight)
+            Flip();
+    }
+
     private void DrawVector()
     {
-        Vector2 start = this.mouseClickPosition;
+        Vector2 start = Camera.main.ScreenToWorldPoint(this.mouseClickPosition);
         Vector2 end = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         lineRenderer.SetPosition(0, start);
         lineRenderer.SetPosition(1, end);
@@ -110,18 +108,12 @@ public class PlayerController : MonoBehaviour
     private void ThrowKnife()
     {
         body.freezeRotation = false;
-        body.bodyType = RigidbodyType2D.Dynamic;
-
         Vector3 knifeColliderPosition = knifeTopCollider.transform.position;
-        Debug.Log("Knife: " + knifeColliderPosition + " | Throw: " + throwVector + " | Target: " + targetPosition);
+        knifeTopBody.AddForce(throwVector * 15f);
 
-        Debug.Log("Sqr magnitude of throw vector: " + throwVector.sqrMagnitude);
-        body.AddForceAtPosition(throwVector * 15f, knifeColliderPosition, ForceMode2D.Impulse);
-
-        float angle = Mathf.Atan2(throwVector.y, throwVector.x) * Mathf.Rad2Deg;
-        Quaternion q = Quaternion.AngleAxis(angle, Vector3.forward);
-        Debug.Log("Angle: " + angle);
-        body.MoveRotation(angle - 90);
+        //float angle = Mathf.Atan2(throwVector.y, throwVector.x) * Mathf.Rad2Deg;
+        //Quaternion q = Quaternion.AngleAxis(angle, Vector3.forward);
+        //body.MoveRotation(angle - 90);
 
         throwKnife = false;
     }
@@ -149,9 +141,11 @@ public class PlayerController : MonoBehaviour
         body.rotation = 0;
         body.freezeRotation = true;
         string collisionObjectTag = theCollision.gameObject.tag;
-        Debug.Log("Collision object name: " + collisionObjectTag);
+        Debug.Log("Collision object tag: " + collisionObjectTag);
+
         switch (collisionObjectTag)
         {
+            case "Stone":
             case "Ground":
                 if (theCollision.otherCollider == knifeTopCollider && body.velocity.magnitude > 1)
                 {
@@ -172,9 +166,8 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    //consider when character is jumping .. it will exit collision.
     void OnCollisionExit2D(Collision2D theCollision)
     {
-        grounded &= theCollision.gameObject.name != "Ground";
+        grounded &= theCollision.gameObject.tag != "Ground";
     }
 }
