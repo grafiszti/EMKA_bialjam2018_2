@@ -22,12 +22,15 @@ public class PlayerController : MonoBehaviour {
     private Vector2 mouseClickPosition;
     private Vector2 throwVector;
 
+    private CircleCollider2D knifeTopCollider;
+
     void Awake()
     {
         this.groundCheck = transform.Find("groundCheck");
         this.anim = GetComponent<Animator>();
         this.body = GetComponent<Rigidbody2D>();
         this.lineRenderer = GetComponent<LineRenderer>();
+        this.knifeTopCollider = transform.Find("knife_top").GetComponent<CircleCollider2D>();
     }
 
     void Update()
@@ -101,7 +104,11 @@ public class PlayerController : MonoBehaviour {
         throwVector.Scale(new Vector2(4f, 4f));
         body.freezeRotation = false;
         
-        body.AddForceAtPosition(throwVector, new Vector2(0, 30f));
+        Vector3 knifeColliderPosition = knifeTopCollider.transform.position;
+        Debug.Log("Knife: " + knifeColliderPosition + " | Throw: " + throwVector);
+        body.bodyType = RigidbodyType2D.Dynamic;
+
+        body.AddForceAtPosition(throwVector, knifeColliderPosition);
         throwKnife = false;
     }
 
@@ -121,11 +128,27 @@ public class PlayerController : MonoBehaviour {
     }
 
     //make sure u replace "floor" with your gameobject name.on which player is standing
-    void OnCollisionEnter2D (Collision2D theCollision)
+    void OnCollisionEnter2D(Collision2D theCollision)
     {
         body.rotation = 0;
         body.freezeRotation = true;
-        grounded |= theCollision.gameObject.name == "floor";
+        string collisionObjectName = theCollision.gameObject.name;
+        Debug.Log("Collision object name: " + collisionObjectName);
+        switch (collisionObjectName)
+        {
+            case "floor":
+                grounded |= true;
+                break;
+            case "wall":
+                Debug.Log("Magnitude: " + body.velocity.magnitude);
+
+                if (theCollision.otherCollider == knifeTopCollider && body.velocity.magnitude > 1)
+                {
+                    Debug.Log("Jebło ostrzem w ścianę.");
+                    body.bodyType = RigidbodyType2D.Static;
+                }
+                break;
+        }
     }
 
     //consider when character is jumping .. it will exit collision.
