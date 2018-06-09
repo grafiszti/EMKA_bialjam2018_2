@@ -5,7 +5,9 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour {
     
     public bool facingRight = true;
-    public bool jump = false;               
+    public bool jump = false;
+    public bool throwKnife = false;
+    private bool drawVector = false;
 
     public float maxSpeed = 5f;
     public float jumpForce = 10f;         // Amount of force added when the player jumps.
@@ -18,7 +20,7 @@ public class PlayerController : MonoBehaviour {
     private LineRenderer lineRenderer;
 
     private Vector2 mouseClickPosition;
-    private bool drawVector = false;
+    private Vector2 throwVector;
 
     void Awake()
     {
@@ -39,22 +41,15 @@ public class PlayerController : MonoBehaviour {
         if (Input.GetMouseButtonDown(0))
         {
             this.mouseClickPosition = Input.mousePosition;
-            this.drawVector = true;
+            drawVector = true;
         }
 
         if(Input.GetMouseButtonUp(0)){
-            this.drawVector = false;
-        }
-
-        if(drawVector){
-            Vector2 start = Camera.main.ScreenToWorldPoint(this.mouseClickPosition);
-            Vector2 end = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-
-            lineRenderer.SetPosition(0, start);
-            lineRenderer.SetPosition(1, end);
-        } else {
+            this.throwVector = new Vector2(Input.mousePosition.x, Input.mousePosition.y) - mouseClickPosition;
             lineRenderer.SetPosition(0, new Vector2(0, 0));
             lineRenderer.SetPosition(1, new Vector2(0, 0));
+            drawVector = false;
+            throwKnife = true;
         }
    }
 
@@ -84,25 +79,38 @@ public class PlayerController : MonoBehaviour {
             Flip();
 
         if (jump)
-        {
-            // Set the Jump animator trigger parameter.
-            anim.SetTrigger("Jump");
-            Debug.Log("JebJEb");
+            Jump();
 
-            // Play a random jump audio clip.
-            //int i = Random.Range(0, jumpClips.Length);
-            //AudioSource.PlayClipAtPoint(jumpClips[i], transform.position);
+        if(drawVector)
+            DrawVector();
 
-            // Add a vertical force to the player.
-            GetComponent<Rigidbody2D>().AddForce(new Vector2(0f, jumpForce));
-
-            // Make sure the player can't jump again until the jump conditions from Update are satisfied.
-            jump = false;
-        }
+        if(throwKnife)
+            ThrowKnife();
+        
     }
 
-    void Flip()
-    {
+    private void DrawVector(){
+        Vector2 start = Camera.main.ScreenToWorldPoint(this.mouseClickPosition);
+        Vector2 end = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        lineRenderer.SetPosition(0, start);
+        lineRenderer.SetPosition(1, end);
+        Debug.Log("Drawing strzealka");
+    }
+
+    private void ThrowKnife(){
+        Debug.Log(throwVector);
+        throwVector.Scale(new Vector2(4f, 4f));
+        body.AddForceAtPosition(throwVector, new Vector2());
+        throwKnife = false;
+    }
+
+    private void Jump(){
+        anim.SetTrigger("Jump");
+        body.AddForce(new Vector2(0f, jumpForce));
+        jump = false;
+    }
+
+    void Flip(){
         facingRight = !facingRight;
 
         // Multiply the player's x local scale by -1.
@@ -114,16 +122,12 @@ public class PlayerController : MonoBehaviour {
     //make sure u replace "floor" with your gameobject name.on which player is standing
     void OnCollisionEnter2D (Collision2D theCollision)
     {
-        if (theCollision.gameObject.name == "floor")
-        {
-            grounded = true;
-        }
+        grounded |= theCollision.gameObject.name == "floor";
     }
 
     //consider when character is jumping .. it will exit collision.
     void OnCollisionExit2D(Collision2D theCollision)
     {
-        if (theCollision.gameObject.name == "floor")
-            grounded = false;
+        grounded &= theCollision.gameObject.name != "floor";
     }
 }
