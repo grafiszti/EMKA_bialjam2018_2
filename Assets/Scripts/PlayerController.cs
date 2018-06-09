@@ -22,17 +22,14 @@ public class PlayerController : MonoBehaviour
     private Vector2 throwVector;
     private Vector2 targetPosition;
 
-    private CircleCollider2D knifeTopCollider;
-    private Rigidbody2D knifeTopBody;
-
+    private Collider2D knifeTopCollider;
 
     void Awake()
     {
         this.anim = GetComponent<Animator>();
         this.body = GetComponent<Rigidbody2D>();
         this.lineRenderer = GetComponent<LineRenderer>();
-        this.knifeTopCollider = transform.Find("knife_top").GetComponent<CircleCollider2D>();
-        this.knifeTopBody = transform.Find("knife_top").GetComponent<Rigidbody2D>();
+        this.knifeTopCollider = transform.Find("knife_top").GetComponent<Collider2D>();
     }
 
     void Update()
@@ -56,6 +53,11 @@ public class PlayerController : MonoBehaviour
             throwKnife = true;
             DrawVector();
         }
+
+        if (Input.GetButtonDown("Vertical"))
+        {
+            GroundPlayer();
+        }
     }
 
     void FixedUpdate()
@@ -68,12 +70,23 @@ public class PlayerController : MonoBehaviour
 
         if (jump)
             Jump();
-
+        
         if (drawVector)
             DrawVector(this.mouseClickPosition, Input.mousePosition);
 
         if (throwKnife)
             ThrowKnife();
+
+        if (Input.GetMouseButtonDown(1))
+        {
+            body.bodyType = RigidbodyType2D.Dynamic;
+            //body.AddTorque(Mathf.Sign(body.rotation) * 70f);
+
+            Vector2 transformation = Quaternion.Euler(0, 0, 180 + body.rotation) * new Vector2(0, 0.1f);
+            body.position += transformation;
+            body.angularVelocity += - Mathf.Sign(body.rotation) * 50f;
+            
+        }
     }
 
     private void HandlePlayerAcceleration(float horizontalVelocity){
@@ -92,12 +105,12 @@ public class PlayerController : MonoBehaviour
             body.velocity = new Vector2(Mathf.Sign(body.velocity.x) * maxSpeed, body.velocity.y);
     }
 
-    private void HandleFaceRotation(float h){
+    private void HandleFaceRotation(float horizontalInput){
         // If the input is moving the player right and the player is facing left...
-        if (h > 0 && !facingRight)
+        if (horizontalInput > 0 && !facingRight)
             Flip();
         // Otherwise if the input is moving the player left and the player is facing right...
-        else if (h < 0 && facingRight)
+        else if (horizontalInput < 0 && facingRight)
             Flip();
     }
 
@@ -113,11 +126,8 @@ public class PlayerController : MonoBehaviour
     {
         body.freezeRotation = false;
         Vector2 knifeColliderPosition = knifeTopCollider.transform.position;
-        body.AddForce(throwVector * 3f);
-
-        //float angle = Mathf.Atan2(throwVector.y, throwVector.x) * Mathf.Rad2Deg;
-        //Quaternion q = Quaternion.AngleAxis(angle, Vector3.forward);
-        //body.MoveRotation(angle - 90);
+        body.AddForce(throwVector * 7f);
+        body.angularVelocity += - Mathf.Sign(throwVector.x) * 100f;
 
         throwKnife = false;
     }
@@ -139,30 +149,21 @@ public class PlayerController : MonoBehaviour
         transform.localScale = theScale;
     }
 
+    private void GroundPlayer(){
+        body.bodyType = RigidbodyType2D.Dynamic;
+        body.rotation = 0;
+        body.freezeRotation = true;
+        grounded |= true;
+    }
+
     //make sure u replace "floor" with your gameobject name.on which player is standing
     void OnCollisionEnter2D(Collision2D theCollision)
     {
-        body.rotation = 0;
-        body.freezeRotation = true;
-        string collisionObjectTag = theCollision.gameObject.tag;
-
-        switch (collisionObjectTag)
+        switch (theCollision.gameObject.tag)
         {
             case "Stone":
             case "Ground":
-                if (theCollision.otherCollider == knifeTopCollider && body.velocity.magnitude > 1)
-                {
-                    Debug.Log("Jebło ostrzem w podłogę.");
-                    body.bodyType = RigidbodyType2D.Static;
-                }
-                grounded |= true;
-                break;
-            case "Plank":
-                if (theCollision.otherCollider == knifeTopCollider && body.velocity.magnitude > 1)
-                {
-                    Debug.Log("Jebło ostrzem w ścianę.");
-                    body.bodyType = RigidbodyType2D.Static;
-                }
+                GroundPlayer();
                 break;
         }
     }
