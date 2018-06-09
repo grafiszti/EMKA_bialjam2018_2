@@ -24,7 +24,7 @@ GameObject:
   - component: {fileID: 61990069673114970}
   m_Layer: 0
   m_Name: bricks
-  m_TagString: Untagged
+  m_TagString: Brick
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -40,7 +40,7 @@ GameObject:
   - component: {fileID: 212929902459013756}
   m_Layer: 0
   m_Name: brick_shadow
-  m_TagString: Untagged
+  m_TagString: Stone
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

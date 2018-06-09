@@ -113,7 +113,7 @@ public class PlayerController : MonoBehaviour
     {
         body.freezeRotation = false;
         Vector2 knifeColliderPosition = knifeTopCollider.transform.position;
-        knifeTopBody.AddForce(throwVector * 15f);
+        body.AddForce(throwVector * 3f);
 
         //float angle = Mathf.Atan2(throwVector.y, throwVector.x) * Mathf.Rad2Deg;
         //Quaternion q = Quaternion.AngleAxis(angle, Vector3.forward);
@@ -145,7 +145,6 @@ public class PlayerController : MonoBehaviour
         body.rotation = 0;
         body.freezeRotation = true;
         string collisionObjectTag = theCollision.gameObject.tag;
-        Debug.Log("Collision object tag: " + collisionObjectTag);
 
         switch (collisionObjectTag)
         {
@@ -159,8 +158,6 @@ public class PlayerController : MonoBehaviour
                 grounded |= true;
                 break;
             case "Plank":
-                Debug.Log("Magnitude: " + body.velocity.magnitude);
-
                 if (theCollision.otherCollider == knifeTopCollider && body.velocity.magnitude > 1)
                 {
                     Debug.Log("Jebło ostrzem w ścianę.");

@@ -8,6 +8,9 @@ TagManager:
   - Ground
   - Rust
   - Stone
+  - Clinch
+  - Shadow
+  - Brick
   layers:
   - Default
   - TransparentFX
