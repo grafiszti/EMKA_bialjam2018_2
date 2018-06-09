@@ -10,7 +10,7 @@ public class PlayerController : MonoBehaviour {
     private bool drawVector = false;
 
     public float maxSpeed = 5f;
-    public float jumpForce = 10f;         // Amount of force added when the player jumps.
+    public float jumpForce = 100f;         // Amount of force added when the player jumps.
     public float moveForce = 3650f;          // Amount of force added to move the player left and right.
 
     private Transform groundCheck;          
@@ -36,6 +36,7 @@ public class PlayerController : MonoBehaviour {
         if (Input.GetButtonDown("Jump") && grounded)
         {
             this.jump = true;
+            Debug.Log("jumpppppppppp" + this.jump);
         }
 
         if (Input.GetMouseButtonDown(0))
@@ -101,14 +102,15 @@ public class PlayerController : MonoBehaviour {
         Debug.Log(throwVector);
         throwVector.Scale(new Vector2(4f, 4f));
         body.freezeRotation = false;
-        body.AddForceAtPosition(throwVector, new Vector2());
+        
+        body.AddForceAtPosition(throwVector, new Vector2(0, 30f));
         throwKnife = false;
     }
 
     private void Jump(){
         anim.SetTrigger("Jump");
         body.AddForce(new Vector2(0f, jumpForce));
-        jump = false;
+        this.jump = false;
     }
 
     void Flip(){
@@ -125,6 +127,7 @@ public class PlayerController : MonoBehaviour {
     {
         body.rotation = 0;
         body.freezeRotation = true;
+        grounded |= theCollision.gameObject.name == "floor";
     }
 
     //consider when character is jumping .. it will exit collision.
