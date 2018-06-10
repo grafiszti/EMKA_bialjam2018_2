@@ -13,6 +13,9 @@ public class PlayerController : MonoBehaviour
     public float jumpForce = 100f;
     public float moveForce = 3650f;
 
+    // Krzysiu to jest życie, dodaj to do huda 
+    public float sharpness = 1f;
+
     private bool grounded = true;
     private Animator anim;
     private Rigidbody2D body;

@@ -4,10 +4,14 @@ using System.Collections;
 public class KnifeTopController : MonoBehaviour
 {
     private Rigidbody2D knifeBody;
+    private PlayerController knifeScript;
+    private Animator knifeAnimator;
     // Use this for initialization
     void Awake()
     {
         this.knifeBody = GetComponentInParent<Rigidbody2D>();
+        this.knifeScript = GetComponentInParent<PlayerController>();
+        this.knifeAnimator = GetComponentInParent<Animator>();
     }
 
     private void Update()
@@ -17,11 +21,18 @@ public class KnifeTopController : MonoBehaviour
 
     void OnCollisionEnter2D(Collision2D theCollision)
     {
-        Debug.Log("asdasasda12313");
         string tag = theCollision.gameObject.tag;
-        //Debug.Log("TAG: " + tag);
-        if(tag == "Stone" || tag == "Ground" || tag == "Plank"){
+
+        if(tag == "Ground" || tag == "Plank"){
             knifeBody.bodyType = RigidbodyType2D.Static;
+            knifeScript.sharpness -= 0.1f;
+        } else if (tag == "Stone"){
+            knifeBody.bodyType = RigidbodyType2D.Static;
+            knifeScript.sharpness -= 0.4f;
+        }
+
+        if(knifeScript.sharpness <= 0f){
+            knifeAnimator.SetTrigger("Death");
         }
     }
 }
