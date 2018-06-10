@@ -30,6 +30,8 @@ public class PlayerController : MonoBehaviour
 
     private Collider2D knifeTopCollider;
 
+    public AudioClip jumpSound;
+
     void Awake()
     {
         this.anim = GetComponent<Animator>();
@@ -43,6 +45,7 @@ public class PlayerController : MonoBehaviour
         if (Input.GetButtonDown("Jump") && grounded)
         {
             this.jump = true;
+            AudioSource.PlayClipAtPoint(jumpSound, transform.position);
         }
 
         if (Input.GetMouseButtonDown(0) && !dying)
@@ -159,6 +162,8 @@ public class PlayerController : MonoBehaviour
         anim.SetTrigger("Jump");
         body.AddForce(new Vector2(0f, jumpForce));
         this.jump = false;
+
+        AudioSource.PlayClipAtPoint(jumpSound, transform.position);
     }
 
     void Flip()

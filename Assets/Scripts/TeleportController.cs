@@ -9,6 +9,8 @@ public class TeleportController : MonoBehaviour {
 
     public bool disabled = false;
 
+    public AudioClip teleportSound;
+
     public TeleportController outPortalController;
 
     public void Awake()
@@ -18,6 +20,7 @@ public class TeleportController : MonoBehaviour {
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
+        AudioSource.PlayClipAtPoint(teleportSound, transform.position);
         if(collision.gameObject.tag == "Player" && !disabled){
             outPortalController.disabled = true;
             player.GetComponentInChildren<Rigidbody2D>().position = outPortalController.spawnPoint;

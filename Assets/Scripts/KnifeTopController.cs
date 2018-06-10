@@ -7,6 +7,10 @@ public class KnifeTopController : MonoBehaviour
     private PlayerController knifeScript;
     private Animator knifeAnimator;
 
+    public AudioClip hitStone;
+    public AudioClip hitPlank;
+    public AudioClip hitMetal;
+
     private float dyingTime = 60.0f;
 
     void Awake()
@@ -32,16 +36,18 @@ public class KnifeTopController : MonoBehaviour
         if (tag == "Ground" || tag == "Plank")
         {
             knifeBody.bodyType = RigidbodyType2D.Static;
-            knifeScript.sharpness -= 0.1f;
+            AudioSource.PlayClipAtPoint(hitPlank, transform.position);
         }
         else if (tag == "Stone")
         {
             knifeBody.bodyType = RigidbodyType2D.Static;
             knifeScript.sharpness -= 0.4f;
+            AudioSource.PlayClipAtPoint(hitStone, transform.position);
         }
         else if (tag == "Rust")
         {
             knifeScript.sharpness -= 0.4f;
+            AudioSource.PlayClipAtPoint(hitMetal, transform.position);
         }
 
         if(knifeScript.sharpness <= 0f & !knifeScript.dying){
