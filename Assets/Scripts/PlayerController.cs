@@ -32,7 +32,7 @@ public class PlayerController : MonoBehaviour
 
     public AudioClip jumpSound;
 
-    private bool isCollide = tr;
+    private bool isCollide = true;
 
     void Awake()
     {
