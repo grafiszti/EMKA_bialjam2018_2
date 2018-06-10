@@ -23,7 +23,7 @@ GameObject:
   - component: {fileID: 199835572096979182}
   m_Layer: 0
   m_Name: RustClouds
-  m_TagString: Untagged
+  m_TagString: Rust
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

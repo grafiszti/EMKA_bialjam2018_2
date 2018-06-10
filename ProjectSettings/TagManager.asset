@@ -11,6 +11,8 @@ TagManager:
   - Clinch
   - Shadow
   - Brick
+  - Portal
+  - Fog
   layers:
   - Default
   - TransparentFX
