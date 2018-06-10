@@ -7,6 +7,7 @@ public class PlayerController : MonoBehaviour
     public bool facingRight = true;
     public bool jump = false;
     public bool throwKnife = false;
+    public bool dying = false;
     private bool drawVector = false;
 
     public float maxSpeed = 5f;
@@ -14,7 +15,7 @@ public class PlayerController : MonoBehaviour
     public float moveForce = 3650f;
 
     // Krzysiu to jest życie, dodaj to do huda 
-    public float sharpness = 1f;
+    public float sharpness = 0.1f;
 
     private bool grounded = true;
     private Animator anim;
@@ -42,13 +43,13 @@ public class PlayerController : MonoBehaviour
             this.jump = true;
         }
 
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(0) && !dying)
         {
             this.mouseClickPosition = Input.mousePosition;
             drawVector = true;
         }
 
-        if (Input.GetMouseButtonUp(0))
+        if (Input.GetMouseButtonUp(0) && !dying)
         {
             this.targetPosition = Input.mousePosition;
             this.throwVector = new Vector2(Input.mousePosition.x, Input.mousePosition.y) - mouseClickPosition;
@@ -57,7 +58,7 @@ public class PlayerController : MonoBehaviour
             DrawVector();
         }
 
-        if (Input.GetButtonDown("Vertical"))
+        if (Input.GetButtonDown("Vertical") && !dying)
         {
             GroundPlayer();
         }
@@ -65,7 +66,11 @@ public class PlayerController : MonoBehaviour
 
     void FixedUpdate()
     {
-        float horizontalInput = Input.GetAxis("Horizontal");
+        float horizontalInput = 0f;
+        if (!dying)
+        {
+            horizontalInput = Input.GetAxis("Horizontal");
+        }
 
         HandlePlayerAcceleration(horizontalInput);
         HandlePlayerMaxVelocity();

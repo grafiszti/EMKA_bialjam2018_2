@@ -1002,6 +1002,11 @@ Prefab:
       propertyPath: m_MaskInteraction
       value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 114660122987207154, guid: 70e2fdea943c640fc905c0cb268a795f,
+        type: 2}
+      propertyPath: sharpness
+      value: 0.1
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 61885848258867332, guid: 70e2fdea943c640fc905c0cb268a795f, type: 2}
     - {fileID: 58730865841946744, guid: 70e2fdea943c640fc905c0cb268a795f, type: 2}

@@ -6,7 +6,9 @@ public class KnifeTopController : MonoBehaviour
     private Rigidbody2D knifeBody;
     private PlayerController knifeScript;
     private Animator knifeAnimator;
-    // Use this for initialization
+
+    private float dyingTime = 60.0f;
+
     void Awake()
     {
         this.knifeBody = GetComponentInParent<Rigidbody2D>();
@@ -14,9 +16,12 @@ public class KnifeTopController : MonoBehaviour
         this.knifeAnimator = GetComponentInParent<Animator>();
     }
 
-    private void Update()
+    private void FixedUpdate()
     {
-        
+        for (int i = 0; i < dyingTime; i++)
+        {
+            Camera.main.orthographicSize -= 9 / 60;
+        }
     }
 
     void OnCollisionEnter2D(Collision2D theCollision)
@@ -31,7 +36,9 @@ public class KnifeTopController : MonoBehaviour
             knifeScript.sharpness -= 0.4f;
         }
 
-        if(knifeScript.sharpness <= 0f){
+        if(knifeScript.sharpness <= 0f & !knifeScript.dying){
+            knifeBody.rotation = 0;
+            knifeScript.dying = true;
             knifeAnimator.SetTrigger("Death");
         }
     }
