@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.SceneManagement;
 
 public class KnifeTopController : MonoBehaviour
 {
@@ -12,6 +13,10 @@ public class KnifeTopController : MonoBehaviour
     public AudioClip hitMetal;
 
     private float dyingTime = 60.0f;
+    private float sceneSwitchingTimeout = 3.5f;
+    private bool isDead = false;
+
+    private float restartTimer = 0f;
 
     void Awake()
     {
@@ -25,7 +30,17 @@ public class KnifeTopController : MonoBehaviour
         for (int i = 0; i < dyingTime; i++)
         {
             Camera.main.orthographicSize -= 9 / 60;
-            
+
+        }
+
+        if (knifeScript.dying)
+        {
+            Debug.Log("Restart timer: " + restartTimer);
+            restartTimer += Time.deltaTime;
+            if (restartTimer >= sceneSwitchingTimeout)
+            {
+                SceneManager.LoadScene("game_over");
+            }
         }
     }
 
@@ -50,7 +65,8 @@ public class KnifeTopController : MonoBehaviour
             AudioSource.PlayClipAtPoint(hitMetal, transform.position);
         }
 
-        if(knifeScript.sharpness <= 0f & !knifeScript.dying){
+        if (knifeScript.sharpness <= 0f & !knifeScript.dying)
+        {
             knifeBody.rotation = 0;
             knifeScript.dying = true;
             knifeAnimator.SetTrigger("Death");
