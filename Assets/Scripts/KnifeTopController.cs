@@ -21,6 +21,7 @@ public class KnifeTopController : MonoBehaviour
         for (int i = 0; i < dyingTime; i++)
         {
             Camera.main.orthographicSize -= 9 / 60;
+            
         }
     }
 
@@ -28,11 +29,18 @@ public class KnifeTopController : MonoBehaviour
     {
         string tag = theCollision.gameObject.tag;
 
-        if(tag == "Ground" || tag == "Plank"){
+        if (tag == "Ground" || tag == "Plank")
+        {
             knifeBody.bodyType = RigidbodyType2D.Static;
             knifeScript.sharpness -= 0.1f;
-        } else if (tag == "Stone"){
+        }
+        else if (tag == "Stone")
+        {
             knifeBody.bodyType = RigidbodyType2D.Static;
+            knifeScript.sharpness -= 0.4f;
+        }
+        else if (tag == "Rust")
+        {
             knifeScript.sharpness -= 0.4f;
         }
 

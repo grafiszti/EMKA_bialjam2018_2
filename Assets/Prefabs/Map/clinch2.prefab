@@ -20,6 +20,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4205299047738824}
   - component: {fileID: 212851074962052718}
+  - component: {fileID: 60692059148884980}
   m_Layer: 0
   m_Name: clinch2
   m_TagString: Clinch
@@ -40,6 +41,40 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!60 &60692059148884980
+PolygonCollider2D:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1959539013270112}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 0.94, y: 0.95}
+    newSize: {x: 0.94, y: 0.95}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  m_Points:
+    m_Paths:
+    - - {x: 0.23872036, y: 0.4361138}
+      - {x: -0.046836294, y: 0.4361138}
+      - {x: -0.24221715, y: -0.044823706}
+      - {x: -0.28730506, y: -0.044823706}
+      - {x: -0.28730506, y: -0.15002878}
+      - {x: -0.25724646, y: -0.21014598}
+      - {x: -0.0017484033, y: -0.21014598}
+      - {x: 0.29883754, y: -0.014765111}
+      - {x: 0.31386682, y: 0.015293484}
+      - {x: 0.31386682, y: 0.25576225}
 --- !u!212 &212851074962052718
 SpriteRenderer:
   m_ObjectHideFlags: 1
