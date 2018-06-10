@@ -19,10 +19,9 @@ public class KnifeTopController : MonoBehaviour
     {
         Debug.Log("asdasasda12313");
         string tag = theCollision.gameObject.tag;
-        Debug.Log("TAG: " + tag);
+        //Debug.Log("TAG: " + tag);
         if(tag == "Stone" || tag == "Ground" || tag == "Plank"){
             knifeBody.bodyType = RigidbodyType2D.Static;
-            Debug.Log("asdasasda");
         }
     }
 }

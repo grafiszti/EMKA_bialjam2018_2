@@ -159,7 +159,14 @@ public class PlayerController : MonoBehaviour
     //make sure u replace "floor" with your gameobject name.on which player is standing
     void OnCollisionEnter2D(Collision2D theCollision)
     {
-        switch (theCollision.gameObject.tag)
+        string tag = theCollision.gameObject.tag;
+
+        if(tag != "Player"){
+            //Debug.Log("THROW: FALS");
+            anim.SetBool("Throw", false);
+        }
+
+        switch (tag)
         {
             case "Stone":
             case "Ground":
@@ -170,6 +177,12 @@ public class PlayerController : MonoBehaviour
 
     void OnCollisionExit2D(Collision2D theCollision)
     {
+        if (theCollision.gameObject.tag != "Player")
+        {
+            Debug.Log("THROW: TRU");
+            anim.SetBool("Throw", true);
+        }
+        
         grounded &= theCollision.gameObject.tag != "Ground";
     }
 }
