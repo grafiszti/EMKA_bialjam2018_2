@@ -26,6 +26,8 @@ public class PlayerController : MonoBehaviour
     private Vector2 throwVector;
     private Vector2 targetPosition;
 
+    public GameObject lightMask;
+
     private Collider2D knifeTopCollider;
 
     void Awake()
@@ -62,6 +64,18 @@ public class PlayerController : MonoBehaviour
         {
             GroundPlayer();
         }
+
+        UpdateLightMask();
+    }
+
+    void UpdateLightMask()
+    {
+        Vector2 mouseScreenPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+
+        Vector2 direction = (mouseScreenPosition - (Vector2)lightMask.transform.position).normalized;
+
+        lightMask.transform.up = direction;
+        lightMask.transform.position = body.position;
     }
 
     void FixedUpdate()

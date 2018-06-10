@@ -13,6 +13,7 @@ TagManager:
   - Brick
   - Portal
   - Fog
+  - Light circle
   layers:
   - Default
   - TransparentFX
