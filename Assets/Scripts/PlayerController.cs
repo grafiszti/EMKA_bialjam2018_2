@@ -32,6 +32,8 @@ public class PlayerController : MonoBehaviour
 
     public AudioClip jumpSound;
 
+    private bool isCollide = true;
+
     void Awake()
     {
         this.anim = GetComponent<Animator>();
@@ -42,7 +44,7 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetButtonDown("Jump") && grounded)
+        if (Input.GetButtonDown("Jump") && isCollide)
         {
             this.jump = true;
             AudioSource.PlayClipAtPoint(jumpSound, transform.position);
@@ -149,6 +151,7 @@ public class PlayerController : MonoBehaviour
 
     private void ThrowKnife()
     {
+        body.bodyType = RigidbodyType2D.Dynamic;
         body.freezeRotation = false;
         Vector2 knifeColliderPosition = knifeTopCollider.transform.position;
         body.AddForce(throwVector * 7f);
@@ -200,6 +203,8 @@ public class PlayerController : MonoBehaviour
                 GroundPlayer();
                 break;
         }
+
+        isCollide = true;
     }
 
     void OnCollisionExit2D(Collision2D theCollision)
@@ -211,5 +216,6 @@ public class PlayerController : MonoBehaviour
         }
         
         grounded &= theCollision.gameObject.tag != "Ground";
+        isCollide = false;
     }
 }
